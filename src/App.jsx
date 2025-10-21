@@ -1,7 +1,5 @@
 import {useState} from "react";
 import './App.css';
-import Titulo from "./components/Titulo.jsx";
-import Mensaje from "./components/Mensaje.jsx";
 
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
