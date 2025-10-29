@@ -1,6 +1,30 @@
 import { Table, Spinner } from 'react-bootstrap';
+import React, { useState } from 'react';
+import BotonOrden from "../ordenamiento/BotonOrden.jsx";
 
 const TablaVentas = ({ ventas, cargando }) => {
+
+  const [orden, setOrden] = useState({ campo: "id_venta", direccion: "asc" });
+
+  const manejarOrden = (campo) => {
+    setOrden((prev) => ({
+      campo,
+      direccion:
+        prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc",
+    }));
+  };
+
+  const ventasOrdenadas = [...ventas].sort((a, b) => {
+    const valorA = a[orden.campo];
+    const valorB = b[orden.campo];
+
+    if (typeof valorA === "number" && typeof valorB === "number") {
+      return orden.direccion === "asc" ? valorA - valorB : valorB - valorA;
+    }
+
+    const comparacion = String(valorA).localeCompare(String(valorB));
+    return orden.direccion === "asc" ? comparacion : -comparacion;
+  });
 
   if (cargando) {
     return (
@@ -16,16 +40,41 @@ const TablaVentas = ({ ventas, cargando }) => {
       <Table striped bordered hover>
         <thead>
           <tr>
-            <th>ID Venta</th>
-            <th>ID Cliente</th>
-            <th>ID Empleado</th>
-            <th>Fecha de Venta</th>
-            <th>Total Venta</th>
+            <BotonOrden
+              campo="id_venta"
+              orden={orden}
+              manejarOrden={manejarOrden}>
+              ID Venta
+            </BotonOrden>
+            <BotonOrden
+              campo="id_cliente"
+              orden={orden}
+              manejarOrden={manejarOrden}>
+              ID Cliente
+            </BotonOrden>
+            <BotonOrden
+              campo="id_empleado"
+              orden={orden}
+              manejarOrden={manejarOrden}>
+              ID Empleado
+            </BotonOrden>
+            <BotonOrden
+              campo="fecha_venta"
+              orden={orden}
+              manejarOrden={manejarOrden}>
+              Fecha de Venta
+            </BotonOrden>
+            <BotonOrden
+              campo="total_venta"
+              orden={orden}
+              manejarOrden={manejarOrden}>
+              Total Venta
+            </BotonOrden>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {ventas.map((venta) => (
+          {ventasOrdenadas.map((venta) => (
             <tr key={venta.id_venta}>
               <td>{venta.id_venta}</td>
               <td>{venta.id_cliente}</td>

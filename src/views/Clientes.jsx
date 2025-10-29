@@ -105,12 +105,14 @@ const Clientes = () => {
                     </Col>
                 </Row>
 
+                <Col className="text-end">
                 <Button
                     className="my-3"
                     onClick={() => setMostrarModal(true)}
                 >
-                    Agregar Nuevo Cliente
+                    + Nuevo Cliente
                 </Button>
+                </Col>
 
                 <TablaClientes
                     clientes={clientesFiltrados}
