@@ -21,8 +21,8 @@ const ModalRegistroCliente = ({
               type="text"
               name="primer_nombre"
               value={nuevoCliente.primer_nombre}
-              onChange={manejarCambioInput}
               placeholder="Ej: carlos"
+              onChange={manejarCambioInput}
               maxLength={20}
               required
             />
@@ -103,6 +103,19 @@ const ModalRegistroCliente = ({
               onChange={manejarCambioInput}
               placeholder="Ej: carlos@example.com"
               maxLength={50}
+              required
+            />
+          </Form.Group>
+
+          <Form.Group className="mb-3" controlId="cedulaCliente">
+            <Form.Label>Cédula del Cliente</Form.Label>
+            <Form.Control
+              type="text"
+              name="cedula"
+              value={nuevoCliente.cedula}
+              onChange={manejarCambioInput}
+              placeholder="Ej: 123456789"
+              maxLength={15}
               required
             />
           </Form.Group>

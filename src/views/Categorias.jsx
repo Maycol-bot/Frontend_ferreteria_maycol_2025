@@ -187,8 +187,6 @@ const manejarCambioInput = (e) => {
                 categoria={categoriaAEliminar}
                 confirmarEliminacion={confirmarEliminacion}
             />
-
-
         
         </>
     );

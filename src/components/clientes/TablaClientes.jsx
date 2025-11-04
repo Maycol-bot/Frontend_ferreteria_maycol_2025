@@ -1,39 +1,53 @@
-import React, {useState} from "react";
-import {Table, Spinner} from 'react-bootstrap';
+import React, { useState } from "react";
+import { Table, Spinner, Button } from "react-bootstrap";
 import BotonOrden from "../ordenamiento/BotonOrden.jsx";
 
-const TablaClientes = ({clientes, cargando}) => {
+const TablaClientes = ({
+  clientes,
+  cargando,
+  abrirModalEdicion,
+  abrirModalEliminacion
+}) => {
 
-    const [orden, setOrden] = useState({ campo: "id_cliente", direccion: "asc" });
+  const [orden, setOrden] = useState({ campo: "id_cliente", direccion: "asc" });
 
-    const manejarOrden = (campo) => {
-        setOrden((prev) => ({
-            campo,
-            direccion:
-                prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc",
-        }));
-    };
+  const manejarOrden = (campo) => {
+    setOrden((prev) => ({
+      campo,
+      direccion:
+        prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc",
+    }));
+  };
 
-    const clientesOrdenados = [...clientes].sort((a, b) => {
-        const valorA = a[orden.campo];
-        const valorB = b[orden.campo];
+  const abrirModalEdicion = (cliente) => {
+    setClienteSeleccionado(cliente);
+    setMostrarModalEdicion(true);
+  };
 
-        if (typeof valorA === "number" && typeof valorB === "number") {
-            return orden.direccion === "asc" ? valorA - valorB : valorB - valorA;
-        }
+  const abrirModalEliminacion = (cliente) => {
+    setClienteSeleccionado(cliente);
+    setMostrarModalEliminacion(true);
+  };
 
-        const comparacion = String(valorA).localeCompare(String(valorB));
-        return orden.direccion === "asc" ? comparacion : -comparacion;
-    });
+  const clientesOrdenados = [...clientes].sort((a, b) => {
+    const valorA = a[orden.campo];
+    const valorB = b[orden.campo];
 
-    if (cargando) {
-        return (
-            <Spinner>
-                <Spinner animation="border" role="status" />
-                <span className="visually-hidden">Cargando...</span>
-            </Spinner>
-        );
-    };
+    if (typeof valorA === "number" && typeof valorB === "number") {
+      return orden.direccion === "asc" ? valorA - valorB : valorB - valorA;
+    }
+
+    const comparacion = String(valorA).localeCompare(String(valorB));
+    return orden.direccion === "asc" ? comparacion : -comparacion;
+  });
+
+  if (cargando) {
+    return (
+      <Spinner animation="border" role="status">
+        <span className="visually-hidden">Cargando...</span>
+      </Spinner>
+    );
+  }
 
     return (
         <>
@@ -103,7 +117,30 @@ const TablaClientes = ({clientes, cargando}) => {
             <td>{cliente.direccion}</td>
             <td>{cliente.celular}</td>
             <td>{cliente.cedula}</td>
-          <td>Accion</td>
+            <td>
+            <Button
+  variant="outline-warning"
+  size="sm"
+  className="me-2"
+  onClick={() => {
+    setClienteSeleccionado(cliente);
+    setMostrarModalEdicion(true);
+  }}
+>
+  <i className="bi bi-pencil"></i>
+</Button>
+
+<Button
+  variant="outline-danger"
+  size="sm"
+  onClick={() => {
+    setClienteSeleccionado(cliente);
+    setMostrarModalEliminacion(true);
+  }}
+>
+  <i className="bi bi-trash"></i>
+</Button>
+            </td>
         </tr>
         );
       })}

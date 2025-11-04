@@ -3,6 +3,8 @@ import {Container, Row, Col, Button} from 'react-bootstrap';
 import TablaClientes from '../components/clientes/TablaClientes.jsx';
 import CuadroBusquedas from '../components/Busquedas/CuadroBusquedas.jsx';
 import ModalRegistroCliente from '../components/clientes/ModalRegistroCliente.jsx';
+import ModalEdicionCliente from '../components/clientes/ModalEdicionCliente.jsx';
+import ModalEliminacionCliente from '../components/clientes/ModalEliminacionCliente.jsx';
 
 const Clientes = () => {
     const [clientes, setClientes] = useState([]);
@@ -21,6 +23,56 @@ const Clientes = () => {
         celular: "",
         email: ""
     });
+
+    const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+    const [mostrarModalEliminacion, setMostrarModalEliminacion] = useState(false);
+    
+    const [clienteEditado, setClienteEditado] = useState(null);
+    const [clienteEliminado, setClienteEliminado] = useState(null);
+
+    const abrirModalEdicion = (cliente) => {
+        setClienteEditado(cliente);
+        setMostrarModalEdicion(true);
+    };
+
+    const guardarEdicion = async () => {
+        if (!clienteEditado.primer_nombre.trim()) return;
+        try {
+            const respuesta = await fetch(`http://localhost:3000/api/clientes/${clienteEditado.id_cliente}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(clienteEditado),
+            });
+            if (!respuesta.ok) throw new Error('Error al guardar la edición');
+            setMostrarModalEdicion(false);
+            await obtenerClientes();
+        } catch (error) {
+            console.error("Error al guardar la edición:", error);
+            alert("No se pudo guardar la edición. Revisa la consola.");
+        }
+    };
+
+    const abrirModalEliminacion = (cliente) => {
+        setClienteEliminado(cliente);
+        setMostrarModalEliminacion(true);
+    };
+
+    const confirmarEliminacion = async () => {
+        try {
+            const respuesta = await fetch(`http://localhost:3000/api/clientes/${clienteEliminado.id_cliente}`, {
+                method: 'DELETE',
+            });
+            if (!respuesta.ok) throw new Error('Error al eliminar el cliente');
+            setClienteEliminado(null);
+            setMostrarModalEliminacion(false);
+            await obtenerClientes();
+        } catch (error) {
+            console.error("Error al eliminar el cliente:", error);
+            alert("No se pudo eliminar el cliente. Revisa la consola.");
+        }
+    };
 
     const obtenerClientes = async () => {
         try {
@@ -117,16 +169,36 @@ const Clientes = () => {
                 <TablaClientes
                     clientes={clientesFiltrados}
                     cargando={cargando}
+                    abrirModalEdicion={abrirModalEdicion}
+                    abrirModalEliminacion={abrirModalEliminacion}
                 />
+
         </Container>
 
             <ModalRegistroCliente
                 mostrarModal={mostrarModal}
-                setMostrarModal={setMostrarModal}   
+                setMostrarModal={setMostrarModal}
                 nuevoCliente={nuevoCliente}
-                setNuevoCliente={setNuevoCliente}
                 agregarCliente={agregarCliente}
+                manejarCambioInput={manejarCambioInput}
             />
+
+            <ModalEdicionCliente
+                mostrar={mostrarModalEdicion}
+                setMostrar={setMostrarModalEdicion}
+                clienteEditado={clienteEditado}
+                setClienteEditado={setClienteEditado}
+                guardarEdicion={guardarEdicion}
+            />
+
+
+            <ModalEliminacionCliente
+                mostrar={mostrarModalEliminacion}
+                setMostrar={setMostrarModalEliminacion}
+                cliente={clienteEliminado}
+                confirmarEliminacion={confirmarEliminacion}
+            />
+
         </>
     );
 
