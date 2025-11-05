@@ -31,7 +31,7 @@ const Clientes = () => {
     const [clienteEliminado, setClienteEliminado] = useState(null);
 
     const abrirModalEdicion = (cliente) => {
-        setClienteEditado(cliente);
+        setClienteEditado({ ...cliente });
         setMostrarModalEdicion(true);
     };
 

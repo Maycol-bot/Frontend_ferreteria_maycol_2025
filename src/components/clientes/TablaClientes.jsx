@@ -5,8 +5,6 @@ import BotonOrden from "../ordenamiento/BotonOrden.jsx";
 const TablaClientes = ({
   clientes,
   cargando,
-  abrirModalEdicion,
-  abrirModalEliminacion
 }) => {
 
   const [orden, setOrden] = useState({ campo: "id_cliente", direccion: "asc" });
@@ -19,15 +17,7 @@ const TablaClientes = ({
     }));
   };
 
-  const abrirModalEdicion = (cliente) => {
-    setClienteSeleccionado(cliente);
-    setMostrarModalEdicion(true);
-  };
 
-  const abrirModalEliminacion = (cliente) => {
-    setClienteSeleccionado(cliente);
-    setMostrarModalEliminacion(true);
-  };
 
   const clientesOrdenados = [...clientes].sort((a, b) => {
     const valorA = a[orden.campo];

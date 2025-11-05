@@ -24,7 +24,7 @@ const ModalEdicionCliente = ({
                         <Form.Control
                             type="text"
                             name="primer_nombre"
-                            value={clienteEditado?.primer_nombre || ""}
+                            value={clienteEditado?.primer_nombre}
                             onChange={manejarCambio}
                             placeholder="Ej: Juan"
                             maxLength={20}
@@ -38,7 +38,7 @@ const ModalEdicionCliente = ({
                         <Form.Control
                             type="text"
                             name="segundo_nombre"
-                            value={clienteEditado?.segundo_nombre || ""}
+                            value={clienteEditado?.segundo_nombre}
                             onChange={manejarCambio}
                             placeholder="Ej: Carlos"
                             maxLength={20}
@@ -50,7 +50,7 @@ const ModalEdicionCliente = ({
                         <Form.Control
                             type="text"
                             name="primer_apellido"
-                            value={clienteEditado?.primer_apellido || ""}
+                            value={clienteEditado?.primer_apellido}
                             onChange={manejarCambio}
                             placeholder="Ej: Pérez"
                             maxLength={20}
@@ -63,7 +63,7 @@ const ModalEdicionCliente = ({
                         <Form.Control
                             type="text"
                             name="segundo_apellido"
-                            value={clienteEditado?.segundo_apellido || ""}
+                            value={clienteEditado?.segundo_apellido}
                             onChange={manejarCambio}
                             placeholder="Ej: Gómez"
                             maxLength={20}
@@ -75,7 +75,7 @@ const ModalEdicionCliente = ({
                         <Form.Control
                             type="text"
                             name="celular"
-                            value={clienteEditado?.celular || ""}
+                            value={clienteEditado?.celular}
                             onChange={manejarCambio}
                             placeholder="Ej: 88887777"
                             maxLength={8}
@@ -90,7 +90,7 @@ const ModalEdicionCliente = ({
                             as="textarea"
                             rows={2}
                             name="direccion"
-                            value={clienteEditado?.direccion || ""}
+                            value={clienteEditado?.direccion}
                             onChange={manejarCambio}
                             placeholder="Ej: Barrio Central, casa #45"
                             maxLength={150}
@@ -102,7 +102,7 @@ const ModalEdicionCliente = ({
                         <Form.Control
                             type="text"
                             name="cedula"
-                            value={clienteEditado?.cedula || ""}
+                            value={clienteEditado?.cedula}
                             onChange={manejarCambio}
                             placeholder="Ej: 001-123456-0000X"
                             maxLength={14}
