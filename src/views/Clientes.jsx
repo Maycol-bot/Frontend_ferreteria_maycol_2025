@@ -22,7 +22,7 @@ const Clientes = () => {
 
   const [nuevoCliente, setNuevoCliente] = useState({
     primer_nombre: '', segundo_nombre: '', primer_apellido: '', segundo_apellido: '',
-    direccion: '', celular: '', email: '', cedula: ''
+    direccion: '', celular: '', cedula: ''
   });
 
   const clientesPaginados = clientesFiltrados.slice(
@@ -47,7 +47,7 @@ const Clientes = () => {
       if (!respuesta.ok) throw new Error('Error al registrar');
       
       setNuevoCliente({ primer_nombre: '', segundo_nombre: '', primer_apellido: '', segundo_apellido: '',
-        direccion: '', celular: '', email: '', cedula: '' });
+        direccion: '', celular: '', cedula: '' });
       setMostrarModal(false);
       await obtenerClientes();
     } catch (error) {
@@ -74,8 +74,7 @@ const Clientes = () => {
     setTextoBusqueda(texto);
     const filtrados = clientes.filter(cli =>
       `${cli.primer_nombre} ${cli.segundo_nombre} ${cli.primer_apellido} ${cli.segundo_apellido}`.toLowerCase().includes(texto) ||
-      cli.celular.includes(texto) || cli.email.toLowerCase().includes(texto) ||
-      cli.cedula.includes(texto) || cli.direccion.toLowerCase().includes(texto)
+      cli.celular.includes(texto) || cli.cedula.includes(texto) || cli.direccion.toLowerCase().includes(texto)
     );
     setClientesFiltrados(filtrados);
     establecerPaginaActual(1);

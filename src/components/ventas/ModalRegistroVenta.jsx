@@ -45,12 +45,12 @@ const ModalRegistroVenta = ({
           <Form.Group className="mb-3" controlId="fechaVenta">
             <Form.Label>Fecha de Venta</Form.Label>
             <Form.Control
-              type="datetime-local"
-              name="fecha_venta"
-              value={nuevaVenta.fecha_venta}
-              onChange={manejarCambioInput}
-              required
-            />
+  type="date"
+  name="fecha_venta"
+  value={nuevaVenta.fecha_venta || ""}
+  onChange={manejarCambioInput}
+  required
+/>
           </Form.Group>
 
           <Form.Group className="mb-3" controlId="totalVenta">

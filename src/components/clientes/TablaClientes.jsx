@@ -60,9 +60,6 @@ const TablaClientes = ({
             <BotonOrden campo="celular" orden={orden} manejarOrden={manejarOrden}>
               Celular
             </BotonOrden>
-            <BotonOrden campo="email" orden={orden} manejarOrden={manejarOrden}>
-              Email
-            </BotonOrden>
             <BotonOrden campo="cedula" orden={orden} manejarOrden={manejarOrden}>
               Cédula
             </BotonOrden>
@@ -79,7 +76,6 @@ const TablaClientes = ({
               <td>{cli.primer_nombre} {cli.segundo_nombre || ''}</td>
               <td>{cli.primer_apellido} {cli.segundo_apellido || ''}</td>
               <td>{cli.celular || '-'}</td>
-              <td>{cli.email || '-'}</td>
               <td>{cli.cedula || '-'}</td>
               <td>{cli.direccion || '-'}</td>
               <td>
