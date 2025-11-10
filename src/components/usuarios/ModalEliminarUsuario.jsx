@@ -1,7 +1,7 @@
 // src/components/usuarios/ModalEliminacionUsuario.jsx
 import { Modal, Button } from "react-bootstrap";
 
-const ModalEliminacionUsuario = ({
+const ModalEliminarUsuario = ({
   mostrar,
   setMostrar,
   usuario,
@@ -33,4 +33,4 @@ const ModalEliminacionUsuario = ({
   );
 };
 
-export default ModalEliminacionUsuario;
+export default ModalEliminarUsuario;

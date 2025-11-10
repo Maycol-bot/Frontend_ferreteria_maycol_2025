@@ -4,18 +4,32 @@ import { Container, Row, Col, Button } from 'react-bootstrap';
 import TablaUsuarios from '../components/usuarios/TablaUsuarios.jsx';
 import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
 import ModalRegistroUsuario from '../components/usuarios/ModalRegistroUsuario.jsx';
+import ModalEditarUsuario from '../components/usuarios/ModalEditarUsuario.jsx';
+import ModalEliminarUsuario from '../components/usuarios/ModalEliminarUsuario.jsx';
 
 const Usuarios = () => {
   const [usuarios, setUsuarios] = useState([]);
   const [cargando, setCargando] = useState(true);
+  const [usuariosFiltrados, setUsuariosFiltrados] = useState([]);
   const [textoBusqueda, setTextoBusqueda] = useState("");
-  const [usuariosFiltrados, setUsuariosFiltrados] = useState([]); // CORREGIDO: "usuariosFiltrados"
-  
   const [mostrarModal, setMostrarModal] = useState(false);
+  const [mostrarModalEdicion, setMostrarModalEdicion] = useState(false);
+  const [mostrarModalEliminar, setMostrarModalEliminar] = useState(false);
+  const [usuarioEditado, setUsuarioEditado] = useState(null);
+  const [usuarioAEliminar, setUsuarioAEliminar] = useState(null);
+  const [paginaActual, setPaginaActual] = useState(1);
+  const elementosPorPagina = 5;
+
   const [nuevoUsuario, setNuevoUsuario] = useState({
     usuario: "",
-    contrasena: "",
+    contrasena: ""
   });
+
+  const usuariosPaginados = usuariosFiltrados.slice(
+    (paginaActual - 1) * elementosPorPagina,
+    paginaActual * elementosPorPagina
+  );
+  
 
   const manejarCambioInput = (e) => {
     const { name, value } = e.target;
@@ -50,6 +64,55 @@ const Usuarios = () => {
     });
 
     setUsuariosFiltrados(filtrados); // CORREGIDO
+    setPaginaActual(1);
+  };
+
+  const abrirModalEdicion = (usuario) => {
+    setUsuarioEditado(usuario);
+    setMostrarModalEdicion(true);
+  };
+
+  const guardarEdicion = async (usuarioActualizado) => {
+    if (!usuarioActualizado.usuario.trim()) {
+      alert("El campo usuario no puede estar vacío");
+      return;
+    }
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/usuarios/${usuarioActualizado.id_usuario}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(usuarioActualizado),
+      });
+      if (!respuesta.ok) throw new Error('Error al actualizar el usuario');
+
+      setMostrarModalEdicion(false);
+      await obtenerUsuarios();
+      alert("Usuario actualizado con éxito");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al actualizar el usuario");
+    }
+  };
+
+  const abrirModalEliminacion = (usuario) => {
+    setUsuarioAEliminar(usuario);
+    setMostrarModalEliminar(true);
+  };
+
+  const confirmarEliminacion = async () => {
+    if (!usuarioAEliminar) return;
+    try {
+      const respuesta = await fetch(`http://localhost:3000/api/usuarios/${usuarioAEliminar.id_usuario}`, {
+        method: 'DELETE',
+      });
+      if (!respuesta.ok) throw new Error('Error al eliminar el usuario');
+      setMostrarModalEliminar(false);
+      await obtenerUsuarios();
+      alert("Usuario eliminado con éxito");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error al eliminar el usuario");
+    }
   };
 
   useEffect(() => {
@@ -106,6 +169,11 @@ const Usuarios = () => {
       <TablaUsuarios
         usuarios={usuariosFiltrados} // CORREGIDO
         cargando={cargando}
+        abrirModalEdicion={abrirModalEdicion}
+        abrirModalEliminacion={abrirModalEliminacion}
+        paginaActual={paginaActual}
+        setPaginaActual={setPaginaActual}
+        elementosPorPagina={elementosPorPagina}
       />
 
       <ModalRegistroUsuario
@@ -114,6 +182,20 @@ const Usuarios = () => {
         nuevoUsuario={nuevoUsuario}
         manejarCambioInput={manejarCambioInput}
         agregarUsuario={agregarUsuario}
+      />
+      <ModalEditarUsuario
+        mostrar={mostrarModalEdicion}
+        setMostrar={setMostrarModalEdicion}
+        usuarioEditado={usuarioEditado}
+        setUsuarioEditado={setUsuarioEditado}
+        guardarEdicion={guardarEdicion}
+      />
+
+      <ModalEliminarUsuario
+        mostrar={mostrarModalEliminar}
+        setMostrar={setMostrarModalEliminar}
+        usuario={usuarioAEliminar}
+        confirmarEliminacion={confirmarEliminacion}
       />
     </Container>
   );

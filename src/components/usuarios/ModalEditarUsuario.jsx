@@ -1,7 +1,7 @@
 // src/components/usuarios/ModalEdicionUsuario.jsx
 import { Modal, Form, Button } from "react-bootstrap";
 
-const ModalEdicionUsuario = ({
+const ModalEditarUsuario = ({
   mostrar,
   setMostrar,
   usuarioEditado,
@@ -68,4 +68,4 @@ const ModalEdicionUsuario = ({
   );
 };
 
-export default ModalEdicionUsuario;
+export default ModalEditarUsuario;
