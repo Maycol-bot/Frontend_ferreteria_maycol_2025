@@ -37,7 +37,7 @@ const ModalEditarUsuario = ({
           <Form.Group className="mb-3" controlId="contrasena">
             <Form.Label>Nueva Contraseña</Form.Label>
             <Form.Control
-              type="password"
+              type="text"
               name="contrasena"
               value={usuarioEditado?.contrasena || ""}
               onChange={manejarCambio}
@@ -56,7 +56,7 @@ const ModalEditarUsuario = ({
         </Button>
         <Button
           variant="primary"
-          onClick={guardarEdicion}
+          onClick={() => guardarEdicion(usuarioEditado)}
           disabled={
             !usuarioEditado?.usuario?.trim()
           }

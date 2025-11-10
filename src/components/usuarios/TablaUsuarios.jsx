@@ -49,7 +49,7 @@ const TablaUsuarios = ({
             <tr key={u.id_usuario}>
               <td>{u.id_usuario}</td>
               <td>{u.usuario}</td>
-              <td>••••••</td>
+              <td>{u.contrasena}</td>
               <td className="text-center">
                 <Button variant="outline-warning" size="sm" className="me-2"
                   onClick={() => abrirModalEdicion(u)}>
