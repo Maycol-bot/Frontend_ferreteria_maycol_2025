@@ -76,10 +76,10 @@ const Ventas = () => {
     }
   };
 
-  const obtenerNombreProducto = async (Id_producto) => {
-    if (!Id_producto) return '—';
+  const obtenerNombreProducto = async (id_producto) => {
+    if (!id_producto) return '—';
     try {
-      const resp = await fetch(`http://localhost:3000/api/producto/${Id_producto}`);
+      const resp = await fetch(`http://localhost:3000/api/producto/${id_producto}`);
       if (!resp.ok) return '—';
       const data = await resp.json();
       return data.nombre_producto || '—';

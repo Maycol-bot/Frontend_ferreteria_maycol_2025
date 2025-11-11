@@ -25,11 +25,10 @@ const Usuarios = () => {
     contrasena: ""
   });
 
-  const usuariosPaginados = usuariosFiltrados.slice(
-    (paginaActual - 1) * elementosPorPagina,
-    paginaActual * elementosPorPagina
-  );
-  
+const usuariosPaginados = usuariosFiltrados.slice(
+  (paginaActual - 1) * elementosPorPagina,
+  paginaActual * elementosPorPagina
+);
 
   const manejarCambioInput = (e) => {
     const { name, value } = e.target;
@@ -44,7 +43,7 @@ const Usuarios = () => {
       }
       const datos = await respuesta.json();
       setUsuarios(datos);
-      setUsuariosFiltrados(datos); // CORREGIDO: "usuariosFiltrados"
+      setUsuariosFiltrados(datos); 
       setCargando(false);
     } catch (error) {
       console.error(error.message);
@@ -52,18 +51,18 @@ const Usuarios = () => {
     }
   };
 
-  // CORREGIDO: busca por ID y usuario
+  //  busca por ID y usuario
   const manejarCambioBusqueda = (e) => {
     const texto = e.target.value.toLowerCase().trim();
     setTextoBusqueda(texto);
 
     const filtrados = usuarios.filter((usuario) => {
-      const id = usuario.id_usuario?.toString().toLowerCase() || ""; // minúscula
+      const id = usuario.id_usuario?.toString().toLowerCase() || ""; 
       const nombre = usuario.usuario?.toLowerCase() || "";
       return id.includes(texto) || nombre.includes(texto);
     });
 
-    setUsuariosFiltrados(filtrados); // CORREGIDO
+    setUsuariosFiltrados(filtrados); 
     setPaginaActual(1);
   };
 
@@ -167,10 +166,11 @@ const Usuarios = () => {
       </Row>
 
       <TablaUsuarios
-        usuarios={usuariosFiltrados} // CORREGIDO
+        usuarios={usuariosPaginados} 
         cargando={cargando}
         abrirModalEdicion={abrirModalEdicion}
         abrirModalEliminacion={abrirModalEliminacion}
+        totalElementos={usuariosFiltrados.length}
         paginaActual={paginaActual}
         setPaginaActual={setPaginaActual}
         elementosPorPagina={elementosPorPagina}
@@ -197,6 +197,7 @@ const Usuarios = () => {
         usuario={usuarioAEliminar}
         confirmarEliminacion={confirmarEliminacion}
       />
+      
     </Container>
   );
 };
