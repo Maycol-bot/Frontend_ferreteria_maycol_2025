@@ -1,76 +1,45 @@
 // src/components/ventas/TablaVentas.jsx
-import React, { useState } from "react";
-import { Table, Spinner, Button } from "react-bootstrap";
-import BotonOrden from "../ordenamiento/BotonOrden";
-import Paginacion from "../ordenamiento/Paginacion";
+import { Table, Button, Pagination } from 'react-bootstrap';
 
 const TablaVentas = ({
-  ventas,
-  cargando,
-  abrirModalEdicion,
-  abrirModalEliminacion,
-  totalElementos,
-  elementosPorPagina,
-  paginaActual,
-  setPaginaActual
+  ventas, cargando, obtenerDetalles, abrirModalEdicion,
+  abrirModalEliminacion, totalElementos, elementosPorPagina,
+  paginaActual, establecerPaginaActual
 }) => {
-  const [orden, setOrden] = useState({ campo: "id_venta", direccion: "asc" });
+  if (cargando) return <div className="text-center">Cargando ventas...</div>;
 
-  const manejarOrden = (campo) => {
-    setOrden(prev => ({
-      campo,
-      direccion: prev.campo === campo && prev.direccion === "asc" ? "desc" : "asc"
-    }));
-  };
-
-  const ventasOrdenadas = [...ventas].sort((a, b) => {
-    const A = a[orden.campo] ?? "";
-    const B = b[orden.campo] ?? "";
-    if (typeof A === "number" && typeof B === "number") {
-      return orden.direccion === "asc" ? A - B : B - A;
-    }
-    return orden.direccion === "asc"
-      ? String(A).localeCompare(String(B))
-      : String(B).localeCompare(String(A));
-  });
-
-  if (cargando) {
-    return (
-      <div className="text-center my-4">
-        <Spinner animation="border" />
-      </div>
-    );
-  }
+  const totalPaginas = Math.ceil(totalElementos / elementosPorPagina);
 
   return (
     <>
-      <Table striped bordered hover className="mt-3">
+      <Table striped bordered hover responsive className="mt-3">
         <thead>
           <tr>
-            <BotonOrden campo="id_venta" orden={orden} manejarOrden={manejarOrden}>ID</BotonOrden>
-            <BotonOrden campo="id_cliente" orden={orden} manejarOrden={manejarOrden}>Cliente</BotonOrden>
-            <BotonOrden campo="id_empleado" orden={orden} manejarOrden={manejarOrden}>Empleado</BotonOrden>
-            <BotonOrden campo="fecha_venta" orden={orden} manejarOrden={manejarOrden}>Fecha</BotonOrden>
-            <BotonOrden campo="total_venta" orden={orden} manejarOrden={manejarOrden}>Total</BotonOrden>
+            <th>ID</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Empleado</th>
+            <th>Total</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {ventasOrdenadas.map((v) => (
+          {ventas.map((v) => (
             <tr key={v.id_venta}>
               <td>{v.id_venta}</td>
-              <td>{v.id_cliente}</td>
-              <td>{v.id_empleado}</td>
-              <td>{new Date(v.fecha_venta).toLocaleDateString('es-NI')}</td>
-              <td>₡{parseFloat(v.total_venta).toFixed(2)}</td>
+              <td>{new Date(v.fecha_venta).toLocaleString()}</td>
+              <td>{v.nombre_cliente}</td>
+              <td>{v.nombre_empleado}</td>
+              <td>C$ {parseFloat(v.total_venta).toFixed(2)}</td>
               <td>
-                <Button variant="outline-warning" size="sm" className="me-2"
-                  onClick={() => abrirModalEdicion(v)}>
-                  <i className="bi bi-pencil"></i>
-                </Button>
-                <Button variant="outline-danger" size="sm"
-                  onClick={() => abrirModalEliminacion(v)}>
-                  <i className="bi bi-trash"></i>
+                <Button size="sm" variant="outline-info" onClick={() => obtenerDetalles(v.id_venta)}>
+                  Detalles
+                </Button>{' '}
+                <Button size="sm" variant="outline-warning" onClick={() => abrirModalEdicion(v)}>
+                  Editar
+                </Button>{' '}
+                <Button size="sm" variant="outline-danger" onClick={() => abrirModalEliminacion(v)}>
+                  Eliminar
                 </Button>
               </td>
             </tr>
@@ -78,12 +47,17 @@ const TablaVentas = ({
         </tbody>
       </Table>
 
-      <Paginacion
-        elementosPorPagina={elementosPorPagina}
-        totalElementos={totalElementos}
-        paginaActual={paginaActual}
-        establecerPaginaActual={setPaginaActual}
-      />
+      <Pagination>
+        {[...Array(totalPaginas)].map((_, i) => (
+          <Pagination.Item
+            key={i + 1}
+            active={i + 1 === paginaActual}
+            onClick={() => establecerPaginaActual(i + 1)}
+          >
+            {i + 1}
+          </Pagination.Item>
+        ))}
+      </Pagination>
     </>
   );
 };
