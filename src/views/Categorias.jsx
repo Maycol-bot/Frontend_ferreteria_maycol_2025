@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import {Container, Row, Col, Button} from 'react-bootstrap';
 import TablaCategorias from '../components/categorias/TablaCategoria.jsx';
-import CuadroBusquedas from '../components/Busquedas/CuadroBusquedas.jsx';
+import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
 import ModalRegistroCategoria from '../components/categorias/ModalRegistroCategoria.jsx';
 import ModalEdicionCategoria from '../components/categorias/ModalEdicionCategoria.jsx';
 import ModalEliminacionCategoria from '../components/categorias/ModalEliminacionCategoria.jsx';
