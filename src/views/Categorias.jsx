@@ -5,6 +5,7 @@ import CuadroBusquedas from '../components/busquedas/CuadroBusquedas.jsx';
 import ModalRegistroCategoria from '../components/categorias/ModalRegistroCategoria.jsx';
 import ModalEdicionCategoria from '../components/categorias/ModalEdicionCategoria.jsx';
 import ModalEliminacionCategoria from '../components/categorias/ModalEliminacionCategoria.jsx';
+import { Zoom } from "react-awesome-reveal";
 
 const Categorias = () => {
     const [categorias, setCategorias] = useState([]);
@@ -156,13 +157,14 @@ const manejarCambioInput = (e) => {
                     </Button>
                 </Col>
 
-
-                <TablaCategorias
+                <Zoom>
+                     <TablaCategorias
                     categorias={categoriasFiltradas}
                     cargando={cargando}
                     abrirModalEdicion={abrirModalEdicion}
                     abrirModalEliminacion={abrirModalEliminacion}
-                />
+                /></Zoom>
+               
 
         </Container>
             <ModalRegistroCategoria
