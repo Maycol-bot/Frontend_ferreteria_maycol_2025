@@ -8,6 +8,10 @@ import ModalRegistroProducto from '../components/productos/ModalRegistroProducto
 import ModalEdicionProducto from '../components/productos/ModalEdicionProducto.jsx';
 import ModalEliminacionProducto from "../components/productos/ModalEliminarProducto.jsx";
 
+// Importamos jsPDF y autotable
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
 const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [productosFiltrados, setProductosFiltrados] = useState([]);
@@ -38,7 +42,7 @@ const Productos = () => {
     const obtenerNombreCategoria = async (id_categoria) => {
         if (!id_categoria) return '—';
         try {
-            const resp = await fetch(`http://localhost:3000/api/categorias/${id_categoria}`);
+            const resp = await fetch(`http://localhost:3000/api/categoria/${id_categoria}`);
             if (!resp.ok) return '—';
             const data = await resp.json();
             return data.nombre_categoria || '—';
@@ -98,9 +102,7 @@ const Productos = () => {
     };
 
     // === ABRIR MODALES ===
-    const abrirModalRegistro = () => {
-        setMostrarRegistro(true);
-    };
+    const abrirModalRegistro = () => setMostrarRegistro(true);
 
     const abrirModalEdicion = (producto) => {
         setProductoAEditar(producto);
@@ -134,22 +136,80 @@ const Productos = () => {
     };
 
     // === LIMPIEZA DE MODALES ===
-    const cerrarModalRegistro = () => {
-        setMostrarRegistro(false);
-    };
-
+    const cerrarModalRegistro = () => setMostrarRegistro(false);
     const cerrarModalEdicion = () => {
         setMostrarEdicion(false);
         setProductoAEditar(null);
     };
-
     const cerrarModalEliminacion = () => {
         setMostrarEliminacion(false);
         setProductoAEliminar(null);
     };
 
-    
+    // === GENERAR PDF ===
+const generarPDF = () => {
+  const doc = new jsPDF({
+    orientation: "landscape",
+    unit: "mm",
+    format: "a4"
+  });
 
+  // Título
+  doc.setFontSize(20);
+  doc.setFont("helvetica", "bold");
+  doc.text("Reporte de Productos", 14, 20);
+
+  // Fecha
+  doc.setFontSize(10);
+  doc.setTextColor(100, 100, 100);
+  doc.text(`Generado: ${new Date().toLocaleString("es-NI")}`, 14, 30);
+
+  // Datos de la tabla
+  const filas = productosFiltrados.map(p => [
+    p.id_producto,
+    p.nombre_producto,
+    p.descripcion_producto || "—",
+    `$${parseFloat(p.precio_unitario).toFixed(2)}`,
+    p.stock,
+    p.nombre_categoria || "Sin categoría"
+  ]);
+
+  // Tabla con autoTable (nueva sintaxis 2025)
+  autoTable(doc, {
+    head: [["ID", "Nombre", "Descripción", "Precio", "Stock", "Categoría"]],
+    body: filas,
+    startY: 40,
+    theme: "grid",
+    styles: { fontSize: 9, cellPadding: 4 },
+    headStyles: { 
+      fillColor: [220, 53, 69], 
+      textColor: [255, 255, 255], 
+      fontStyle: "bold" 
+    },
+    alternateRowStyles: { fillColor: [245, 245, 245] },
+    columnStyles: {
+      0: { cellWidth: 20 },
+      1: { cellWidth: 55 },
+      2: { cellWidth: 70 },
+      3: { cellWidth: 30 },
+      4: { cellWidth: 25 },
+      5: { cellWidth: 40 }
+    }
+  });
+
+  // Totales
+  const totalProductos = productosFiltrados.length;
+  const valorTotal = productosFiltrados.reduce((acc, p) => acc + p.precio_unitario * p.stock, 0);
+
+  doc.setFontSize(12);
+  doc.setTextColor(0);
+  doc.setFont("helvetica", "bold");
+  doc.text(`Total productos: ${totalProductos}`, 14, doc.lastAutoTable.finalY + 15);
+  doc.text(`Valor total inventario: $${valorTotal.toFixed(2)}`, 14, doc.lastAutoTable.finalY + 23);
+
+  // Guardar
+  doc.save(`productos_${new Date().toISOString().slice(0,10)}.pdf`);
+};
     // === useEffect ===
     useEffect(() => {
         obtenerProductos();
@@ -164,10 +224,11 @@ const Productos = () => {
                 <Row className="mb-3 align-items-center">
                     <Col lg={3} md={4} sm={6} xs={12} className="text-start">
                         <Button
-                            variant="secondary"
-                            className="w-100 mb-2"
-                            onClick={() => alert('PDF en desarrollo...')}
+                            variant="danger"
+                            className="w-100 mb-2 d-flex align-items-center justify-content-center gap-2"
+                            onClick={generarPDF}
                         >
+                            <i className="bi bi-file-earmark-pdf-fill"></i>
                             Generar PDF
                         </Button>
                     </Col>
@@ -193,8 +254,8 @@ const Productos = () => {
                     productos={productosPaginados}
                     cargando={cargando}
                     recargarProductos={obtenerProductos}
-                    onEditar={abrirModalEdicion}
-                    onEliminar={abrirModalEliminacion}
+                    abrirModalEdicion={abrirModalEdicion}
+                    abrirModalEliminacion={abrirModalEliminacion}
                     totalElementos={productosFiltrados.length}
                     elementosPorPagina={elementosPorPagina}
                     paginaActual={paginaActual}

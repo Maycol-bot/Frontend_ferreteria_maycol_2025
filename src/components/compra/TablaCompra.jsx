@@ -1,11 +1,11 @@
-// src/components/productos/TablaProductos.jsx
+// src/components/compras/TablaCompras.jsx
 import React, { useState } from "react";
-import { Table, Spinner, Button } from 'react-bootstrap';
+import { Table, Spinner, Button, Badge } from 'react-bootstrap';
 import BotonOrden from "../ordenamiento/BotonOrden.jsx";
 import Paginacion from "../ordenamiento/Paginacion.jsx";
 
-const TablaProductos = ({
-  productos,
+const TablaCompras = ({
+  compras,
   cargando,
   abrirModalEdicion,
   abrirModalEliminacion,
@@ -15,7 +15,7 @@ const TablaProductos = ({
   establecerPaginaActual
 }) => {
 
-  const [orden, setOrden] = useState({ campo: "id_producto", direccion: "asc" });
+  const [orden, setOrden] = useState({ campo: "id_compra", direccion: "desc" });
 
   const manejarOrden = (campo) => {
     setOrden((prev) => ({
@@ -24,10 +24,16 @@ const TablaProductos = ({
     }));
   };
 
-  // Ordenamiento local
-  const productosOrdenados = [...productos].sort((a, b) => {
+  // Ordenamiento local (igual que en productos)
+  const comprasOrdenadas = [...compras].sort((a, b) => {
     const valorA = a[orden.campo] ?? "";
     const valorB = b[orden.campo] ?? "";
+
+    if (orden.campo === "fecha_compra") {
+      return orden.direccion === "asc"
+        ? new Date(valorA) - new Date(valorB)
+        : new Date(valorB) - new Date(valorA);
+    }
 
     if (typeof valorA === "number" && typeof valorB === "number") {
       return orden.direccion === "asc" ? valorA - valorB : valorB - valorA;
@@ -37,12 +43,12 @@ const TablaProductos = ({
     return orden.direccion === "asc" ? comparacion : -comparacion;
   });
 
-  // Loading
+  // Loading (exactamente igual que en productos)
   if (cargando) {
     return (
       <div className="text-center my-5">
         <Spinner animation="border" role="status" />
-        <span className="ms-3">Cargando productos...</span>
+        <span className="ms-3">Cargando compras...</span>
       </div>
     );
   }
@@ -52,45 +58,40 @@ const TablaProductos = ({
       <Table striped bordered hover responsive>
         <thead>
           <tr>
-            <BotonOrden campo="id_producto" orden={orden} manejarOrden={manejarOrden}>
-              ID
+            <BotonOrden campo="id_compra" orden={orden} manejarOrden={manejarOrden}>
+              ID Compra
             </BotonOrden>
-            <BotonOrden campo="nombre_producto" orden={orden} manejarOrden={manejarOrden}>
-              Nombre Producto
+            <BotonOrden campo="fecha_compra" orden={orden} manejarOrden={manejarOrden}>
+              Fecha
             </BotonOrden>
-            <BotonOrden campo="descripcion_producto" orden={orden} manejarOrden={manejarOrden}>
-              Descripción Producto
+            <BotonOrden campo="id_empleado" orden={orden} manejarOrden={manejarOrden}>
+              ID Empleado
             </BotonOrden>
-            <BotonOrden campo="precio_unitario" orden={orden} manejarOrden={manejarOrden}>
-              Precio Unitario
-            </BotonOrden>
-            <BotonOrden campo="stock" orden={orden} manejarOrden={manejarOrden}>
-              Stock
-            </BotonOrden>
-            <BotonOrden campo="imagen" orden={orden} manejarOrden={manejarOrden}>
-              Imagen
+            <BotonOrden campo="total_compra" orden={orden} manejarOrden={manejarOrden}>
+              Total Compra
             </BotonOrden>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
-          {productosOrdenados.map((producto) => (
-            <tr key={producto.id_producto}>
-              <td>{producto.id_producto}</td>
-              <td>{producto.nombre_producto}</td>
-              <td>{producto.descripcion_producto || "-"}</td>
-              <td>{Number(producto.precio_unitario).toFixed(2)}</td>
-              <td>{producto.stock}</td>
+          {comprasOrdenadas.map((compra) => (
+            <tr key={compra.id_compra}>
               <td>
-                {producto.imagen ? (
-                  <img
-                    src={`data:image/png;base64,${producto.imagen}`}
-                    alt={producto.nombre_producto}
-                    style={{ maxWidth: "100px", maxHeight: "80px", objectFit: "cover" }}
-                  />
-                ) : (
-                  "Sin imagen"
-                )}
+                <Badge bg="primary">#{compra.id_compra}</Badge>
+              </td>
+              <td>
+                {new Date(compra.fecha_compra).toLocaleDateString("es-NI", {
+                  year: "numeric",
+                  month: "short",
+                  day: "numeric"
+                })}
+              </td>
+              <td>
+                <i className="bi bi-person-circle text-primary me-2"></i>
+                {compra.id_empleado}
+              </td>
+              <td className="text-end fw-bold text-success">
+                C$ {parseFloat(compra.total_compra).toFixed(2)}
               </td>
               <td>
                 <div className="d-flex gap-1">
@@ -98,7 +99,7 @@ const TablaProductos = ({
                     size="sm"
                     variant="outline-warning"
                     className="me-1"
-                    onClick={() => abrirModalEdicion(producto)}
+                    onClick={() => abrirModalEdicion(compra)}
                     title="Editar"
                   >
                     <i className="bi bi-pencil"></i>
@@ -106,7 +107,7 @@ const TablaProductos = ({
                   <Button
                     size="sm"
                     variant="outline-danger"
-                    onClick={() => abrirModalEliminacion(producto)}
+                    onClick={() => abrirModalEliminacion(compra)}
                     title="Eliminar"
                   >
                     <i className="bi bi-trash"></i>
@@ -118,7 +119,7 @@ const TablaProductos = ({
         </tbody>
       </Table>
 
-      {/* Paginación */}
+      {/* Paginación (exactamente igual) */}
       <Paginacion
         totalElementos={totalElementos}
         elementosPorPagina={elementosPorPagina}
@@ -129,4 +130,4 @@ const TablaProductos = ({
   );
 };
 
-export default TablaProductos;
+export default TablaCompras;

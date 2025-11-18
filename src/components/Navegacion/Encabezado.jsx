@@ -68,6 +68,11 @@ setMostrarMenu(false);
               </Nav.Link>
 
               <Nav.Link className={mostrarMenu ? "text-dark" : "text-white"}
+                onClick={() => manejarNavegacion("/compra")}
+              >{mostrarMenu ? <i className="bi bi-bag-fill me-2"></i> : null} Compras
+              </Nav.Link>
+
+              <Nav.Link className={mostrarMenu ? "text-dark" : "text-white"}
                 onClick={() => manejarNavegacion("/ventas")}
               >{mostrarMenu ? <i className="bi bi-cart-fill me-2"></i> : null} Ventas
               </Nav.Link>

@@ -16,6 +16,7 @@ import Empleados from "./views/Empleados";
 import Usuarios from "./views/Usuarios";
 import Ventas from "./views/Ventas";
 import Clientes from "./views/Clientes";
+import Compras from "./views/Compras";
 
 
 //Importar archivo de estilos.
@@ -36,6 +37,7 @@ const App = () =>{
           <Route path="/ventas" element={<Ventas />} />
           <Route path="/clientes" element={<Clientes />} />
           <Route path="/catalogo" element={<Catalogo />} />
+          <Route path="/compra" element={<Compras />} />
           <Route path="*" element={<h2>404 - Página no encontrada</h2>} />
         </Routes>
       </main>

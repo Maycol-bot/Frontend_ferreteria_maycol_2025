@@ -145,14 +145,24 @@ const ModalRegistroProducto = ({ mostrar, setMostrar, onProductoRegistrado }) =>
             />
           </Form.Group>
 
-          <Form.Group className="mb-3">
-            <Form.Label>URL de Imagen (opcional)</Form.Label>
+          <Form.Group className="mb-3" controlId="formImagenProducto">
+            <Form.Label>Imagen</Form.Label>
             <Form.Control
-              type="url"
+              type="file"
               name="imagen"
-              value={formData.imagen}
-              onChange={manejarCambio}
-              placeholder="https://ejemplo.com/producto.jpg"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files[0];
+                if (file) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    manejarCambioInput({
+                      target: { name: 'imagen', value: reader.result.split(',')[1] } // Extrae solo la parte Base64
+                    });
+                  };
+                  reader.readAsDataURL(file);
+                }
+              }}
             />
           </Form.Group>
         </Modal.Body>

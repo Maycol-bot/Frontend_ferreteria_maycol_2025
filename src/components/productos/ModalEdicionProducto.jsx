@@ -2,7 +2,13 @@
 import { useState, useEffect } from "react";
 import { Modal, Form, Button, Alert } from "react-bootstrap";
 
-const ModalEdicionProducto = ({ mostrar, setMostrar, producto, onActualizado }) => {
+const ModalEdicionProducto = ({ 
+    mostrar, 
+    setMostrar, 
+    producto, 
+    onActualizado,
+    categorias = []   // ← valor por defecto para evitar errores
+}) => {
     const [formData, setFormData] = useState({});
     const [error, setError] = useState('');
     const [cargando, setCargando] = useState(false);
@@ -15,7 +21,7 @@ const ModalEdicionProducto = ({ mostrar, setMostrar, producto, onActualizado }) 
                 id_categoria: producto.id_categoria || '',
                 precio_unitario: producto.precio_unitario || '',
                 stock: producto.stock || '',
-                imagen: producto.imagen || ''
+                imagen: producto.imagen || null
             });
             setError('');
         }
@@ -24,6 +30,18 @@ const ModalEdicionProducto = ({ mostrar, setMostrar, producto, onActualizado }) 
     const manejarCambio = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
+    };
+
+    const manejarImagen = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onloadend = () => {
+            const base64 = reader.result.split(',')[1];
+            setFormData(prev => ({ ...prev, imagen: base64 }));
+        };
+        reader.readAsDataURL(file);
     };
 
     const manejarSubmit = async (e) => {
@@ -42,7 +60,7 @@ const ModalEdicionProducto = ({ mostrar, setMostrar, producto, onActualizado }) 
             if (!res.ok) throw new Error(data.mensaje || 'Error al actualizar');
 
             onActualizado();
-            setTimeout(() => setMostrar(false), 800);
+            setMostrar(false);
         } catch (err) {
             setError(err.message);
         } finally {
@@ -60,20 +78,33 @@ const ModalEdicionProducto = ({ mostrar, setMostrar, producto, onActualizado }) 
             <Form onSubmit={manejarSubmit}>
                 <Modal.Body>
                     {error && <Alert variant="danger">{error}</Alert>}
-                    {/* === CAMPOS (igual que registro) === */}
+
                     <Form.Group className="mb-3">
                         <Form.Label>Nombre *</Form.Label>
-                        <Form.Control name="nombre_producto" value={formData.nombre_producto} onChange={manejarCambio} required />
+                        <Form.Control
+                            name="nombre_producto"
+                            value={formData.nombre_producto || ''}
+                            onChange={manejarCambio}
+                            required
+                        />
                     </Form.Group>
+
                     <Form.Group className="mb-3">
                         <Form.Label>Descripción</Form.Label>
-                        <Form.Control as="textarea" rows={2} name="descripcion_producto" value={formData.descripcion_producto} onChange={manejarCambio} />
+                        <Form.Control
+                            as="textarea"
+                            rows={2}
+                            name="descripcion_producto"
+                            value={formData.descripcion_producto || ''}
+                            onChange={manejarCambio}
+                        />
                     </Form.Group>
+
                     <Form.Group className="mb-3">
                         <Form.Label>Categoría *</Form.Label>
                         <Form.Select
                             name="id_categoria"
-                            value={formData.id_categoria}
+                            value={formData.id_categoria || ''}
                             onChange={manejarCambio}
                             required
                         >
@@ -85,25 +116,59 @@ const ModalEdicionProducto = ({ mostrar, setMostrar, producto, onActualizado }) 
                             ))}
                         </Form.Select>
                     </Form.Group>
+
                     <Form.Group className="mb-3">
                         <Form.Label>Precio *</Form.Label>
-                        <Form.Control type="number" step="0.01" name="precio_unitario" value={formData.precio_unitario} onChange={manejarCambio} required />
+                        <Form.Control
+                            type="number"
+                            step="0.01"
+                            name="precio_unitario"
+                            value={formData.precio_unitario || ''}
+                            onChange={manejarCambio}
+                            required
+                        />
                     </Form.Group>
+
                     <Form.Group className="mb-3">
                         <Form.Label>Stock *</Form.Label>
-                        <Form.Control type="number" name="stock" value={formData.stock} onChange={manejarCambio} required min="0" />
+                        <Form.Control
+                            type="number"
+                            name="stock"
+                            value={formData.stock || ''}
+                            onChange={manejarCambio}
+                            required
+                            min="0"
+                        />
                     </Form.Group>
+
                     <Form.Group className="mb-3">
-                        <Form.Label>Imagen (URL)</Form.Label>
-                        <Form.Control type="url" name="imagen" value={formData.imagen} onChange={manejarCambio} />
+                        <Form.Label>Imagen actual</Form.Label>
+                        <div className="mb-2">
+                            {formData.imagen ? (
+                                <img
+                                    src={`data:image/png;base64,${formData.imagen}`}
+                                    alt="Actual"
+                                    style={{ maxWidth: "120px", borderRadius: "8px" }}
+                                />
+                            ) : (
+                                <span className="text-muted">Sin imagen</span>
+                            )}
+                        </div>
+                        <Form.Control
+                            type="file"
+                            accept="image/*"
+                            onChange={manejarImagen}
+                        />
+                        <Form.Text>Nueva imagen (opcional)</Form.Text>
                     </Form.Group>
                 </Modal.Body>
+
                 <Modal.Footer>
                     <Button variant="secondary" onClick={() => setMostrar(false)} disabled={cargando}>
                         Cancelar
                     </Button>
                     <Button variant="primary" type="submit" disabled={cargando}>
-                        {cargando ? 'Actualizando...' : 'Actualizar'}
+                        {cargando ? 'Guardando...' : 'Guardar cambios'}
                     </Button>
                 </Modal.Footer>
             </Form>
